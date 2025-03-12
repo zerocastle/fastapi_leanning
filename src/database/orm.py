@@ -1,6 +1,8 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base
 
+from schema.request import CreateRequest
+
 Base = declarative_base()
 
 class Todo(Base):
@@ -14,5 +16,11 @@ class Todo(Base):
         return f"todo(id = {self.id} , contents = {self.contents} , is_done = {self.is_done})"
 
 
-
+    @classmethod
+    def create(cls, request:CreateRequest) -> "Todo":
+        return cls(
+            id = request.id,
+            contents = request.contents,
+            is_done = request.is_done,
+        )
 
