@@ -4,8 +4,8 @@ from fastapi import FastAPI, Body, HTTPException, Depends
 from sqlalchemy.orm import Session
 from database.connection import get_db
 from database.orm import Todo
-from database.repository import get_todos, get_todo_by_todo_id
-from schema.request import CreateRequest
+from database.repository import get_todos, get_todo_by_todo_id, create_todo
+from schema.request import CreateToDoRequest
 from schema.response import ToDoListSechema, ToDoSchema
 
 app = FastAPI()
@@ -58,10 +58,14 @@ def get_todo_handler(todo_id : int
     raise HTTPException(status_code=404 , detail="Todo not found !")
 
 
-@app.post("/todos")
-def post_todo_handler(request : CreateRequest):
-    todo_data[request.id] = request.model_dump()
-    return todo_data[request.id]
+@app.post("/todos" , status_code=201)
+def post_todo_handler(
+        request : CreateToDoRequest,
+        session : Session = Depends(get_db)
+) -> ToDoSchema:
+    todo : Todo = Todo.create(request = request)
+    todo : Todo = create_todo(sessoin=session , todo = todo)
+    return ToDoSchema.model_validate(todo)
 
 
 @app.patch("/todos/{todo_id}")

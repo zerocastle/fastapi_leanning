@@ -1,7 +1,7 @@
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base
 
-from schema.request import CreateRequest
+from schema.request import CreateToDoRequest
 
 Base = declarative_base()
 
@@ -17,7 +17,7 @@ class Todo(Base):
 
 
     @classmethod
-    def create(cls, request:CreateRequest) -> "Todo":
+    def create(cls, request:CreateToDoRequest) -> "Todo":
         return cls(
             id = request.id,
             contents = request.contents,
