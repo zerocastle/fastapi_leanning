@@ -1,6 +1,6 @@
 from typing import List
 
-from sqlalchemy import select
+from sqlalchemy import select , delete
 from sqlalchemy.orm import Session
 from database.orm import Todo
 
@@ -15,3 +15,15 @@ def create_todo(sessoin : Session , todo: Todo) ->Todo:
     sessoin.commit()
     sessoin.refresh(instance=todo)
     return todo
+
+def update_todo(session : Session , todo : Todo ) ->Todo:
+    session.add(instance=todo)
+    session.commit()
+    session.refresh(instance=todo)
+    return todo
+
+
+def delete_todo(session : Session , todo_id : int)-> None :
+    session.execute(delete(Todo).where(Todo.id == todo_id))
+    session.commit()
+
