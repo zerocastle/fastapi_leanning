@@ -1,3 +1,4 @@
+from pydantic import ConfigDict
 from sqlalchemy import Column, Integer, String, ForeignKey
 from sqlalchemy.orm import declarative_base
 
@@ -11,6 +12,8 @@ class Todo(Base):
     id = Column(Integer , primary_key=True , index = True)
     contents = Column(String(256), nullable=False)
     is_done = Column(String , nullable=False)
+
+    model_config  = ConfigDict(orm_mode=True)
         
     def __repr__(self):
         return f"todo(id = {self.id} , contents = {self.contents} , is_done = {self.is_done})"
