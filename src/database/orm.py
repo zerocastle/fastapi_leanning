@@ -1,30 +1,31 @@
 from pydantic import ConfigDict
 from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import declarative_base , relationship
 
 from schema.request import CreateToDoRequest
 
 Base = declarative_base()
 
+
 class Todo(Base):
     __tablename__ = "todo"
-    
-    id = Column(Integer , primary_key=True , index = True)
-    contents = Column(String(256), nullable=False)
-    is_done = Column(String , nullable=False)
 
-    model_config  = ConfigDict(orm_mode=True)
-        
+    id = Column(Integer, primary_key=True, index=True)
+    contents = Column(String(256), nullable=False)
+    is_done = Column(String, nullable=False)
+    user_id = Column(Integer, ForeignKey("user.id"))
+
+    model_config = ConfigDict(orm_mode=True)
+
     def __repr__(self):
         return f"todo(id = {self.id} , contents = {self.contents} , is_done = {self.is_done})"
 
-
     @classmethod
-    def create(cls, request:CreateToDoRequest) -> "Todo":
+    def create(cls, request: CreateToDoRequest) -> "Todo":
         return cls(
-            id = request.id,
-            contents = request.contents,
-            is_done = request.is_done,
+            id=request.id,
+            contents=request.contents,
+            is_done=request.is_done,
         )
 
     def done(self) -> "Todo":
@@ -36,3 +37,11 @@ class Todo(Base):
         return self
 
 
+class User(Base):
+
+    __tablename__ = "userm"
+
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String(256), nullable=False)
+    password = Column(String(256), nullable=False)
+    todos = relationship("Todo" , lazy="joined")
