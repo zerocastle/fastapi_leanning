@@ -38,10 +38,11 @@ class TodoRepository:
     def queryTest(self):
         query = text(
             """
-        select *
+        select b.id , a.USERNAME , B.CONTENTS ,is_done , user_id
         from userm a , todo b
-        where 1 = 1
-        and a.id = b.id
+        WHERE 1 = 1
+        AND A.ID = B.USER_ID
+        order by 1 
         """
         )
         result = self.session.execute(query)
