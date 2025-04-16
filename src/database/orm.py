@@ -13,7 +13,7 @@ class Todo(Base):
     id = Column(Integer, primary_key=True, index=True)
     contents = Column(String(256), nullable=False)
     is_done = Column(String, nullable=False)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    # user_id = Column(Integer, ForeignKey("user.id"))
 
     model_config = ConfigDict(orm_mode=True)
 
@@ -44,7 +44,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String(256), nullable=False)
     password = Column(String(256), nullable=False)
-    todos = relationship("Todo" , lazy="joined")
+    # todos = relationship("Todo" , lazy="joined")
     
     @classmethod
     def create(cls , id: int, username: str , hashed_password: str) -> "User":

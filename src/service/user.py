@@ -19,7 +19,7 @@ class UserService:
         
         return bcrypt.checkpw(
             plain_password.encode(self.encoding),
-            hashed_password.encode(self.enconding)
+            hashed_password.encode(self.encoding)
         )
         
         

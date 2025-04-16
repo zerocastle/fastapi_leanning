@@ -33,7 +33,7 @@ def user_sign_up_handler(request : SignUpRequest  ,
 
 @router.post("/log-in")
 def user_log_in_handler(
-    request : Login_by_user = Depends(),
+    request : Login_by_user,
     user_service : UserService = Depends(),
     user_repo : UserRepository = Depends()
     
@@ -50,7 +50,7 @@ def user_log_in_handler(
     
     
     #3 user.password , reuqest.password -> bcrypt checkow
-    verified = UserService.verify_password(
+    verified = user_service.verify_password(
         plain_password=request.password
         ,hashed_password=user.password
                                 )
