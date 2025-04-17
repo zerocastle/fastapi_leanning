@@ -7,16 +7,24 @@ from database.orm import Todo
 from database.repository import TodoRepository
 from schema.request import CreateToDoRequest
 from schema.response import ToDoListSechema, ToDoSchema
+from security import get_access_token
+from service.user import UserService
 
 rounter = APIRouter(prefix="/todos")
 
 
 @rounter.get("", status_code=200)
 def get_todos_handler(
-    order: str | None = None, todo_repo: TodoRepository = Depends(TodoRepository)
+    access_token = Depends(get_access_token),
+    order: str | None = None, todo_repo: TodoRepository = Depends(TodoRepository),
+    user_service : UserService = Depends()
 ) -> ToDoListSechema:
+    
+    print("=======")
+    print(access_token)
+    print("=======")
+    
     todos: List[Todo] = todo_repo.get_todos()
-
     if order == "DESC":
         return ToDoListSechema(
             todos=[ToDoSchema.model_validate(todo) for todo in todos[::-1]]
