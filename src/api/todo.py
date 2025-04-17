@@ -3,8 +3,8 @@ from typing import List
 from fastapi import FastAPI, Body, HTTPException, Depends, APIRouter
 from sqlalchemy.orm import Session
 from database.connection import get_db
-from database.orm import Todo
-from database.repository import TodoRepository
+from database.orm import Todo, User
+from database.repository import TodoRepository, UserRepository
 from schema.request import CreateToDoRequest
 from schema.response import ToDoListSechema, ToDoSchema
 from security import get_access_token
@@ -15,15 +15,25 @@ rounter = APIRouter(prefix="/todos")
 
 @rounter.get("", status_code=200)
 def get_todos_handler(
-    access_token = Depends(get_access_token),
-    order: str | None = None, todo_repo: TodoRepository = Depends(TodoRepository),
-    user_service : UserService = Depends()
+    access_token=Depends(get_access_token),
+    order: str | None = None,
+    todo_repo: TodoRepository = Depends(),
+    user_repo: UserRepository = Depends(),
+    user_service: UserService = Depends(),
 ) -> ToDoListSechema:
+
+    username: str = user_service.decode_jwt(access_token=access_token)
+
+    user: User | None = user_repo.get_User_by_username(username=username)
+
+    if not user:
+        raise HTTPException(status_code=404, detail="User not Found")
     
+
     print("=======")
     print(access_token)
     print("=======")
-    
+
     todos: List[Todo] = todo_repo.get_todos()
     if order == "DESC":
         return ToDoListSechema(
@@ -77,4 +87,3 @@ def delete_todo_handler(
     if todo:
         todo_repo.delete_todo(todo_id=todo_id)
     raise HTTPException(status_code=404, detail="ToDo Not Found")
-

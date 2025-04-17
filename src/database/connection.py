@@ -4,7 +4,7 @@ from sqlalchemy import create_engine, text, select
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path="D:/fastApiLec/.venv/pyvenv.cfg")
+load_dotenv(dotenv_path="D:/fastapi_leanning/.venv/pyvenv.cfg")
 
 username = os.environ["DB_ID"]
 password = os.environ["DB_PW"]
