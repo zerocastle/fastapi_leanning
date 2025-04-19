@@ -9,7 +9,7 @@ from database.repository import TodoRepository
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-from schema.request import  requestLLM
+from schema.request import requestLLM
 
 
 load_dotenv(dotenv_path="D:/fastApiLec/.venv/pyvenv.cfg")
@@ -21,10 +21,8 @@ client = OpenAI(api_key=open_api_key)
 
 @rounter.post("", status_code=200)
 def post_todos_handler(
-                        request_data : requestLLM ,
-                        todo_repo: TodoRepository = Depends(TodoRepository)
-                       
-                       ):
+    request_data: requestLLM, todo_repo: TodoRepository = Depends(TodoRepository)
+):
     result = todo_repo.queryTest()
 
     llm_query = f"""
@@ -51,3 +49,9 @@ def post_todos_handler(
     result = response.choices[0].message.content
 
     return {"res": result}
+
+
+@rounter.post("/procTest", status_code=200)
+def post_procTest_handler(todo_repo: TodoRepository = Depends(TodoRepository)):
+    result = todo_repo.queryTest2()
+    return result
