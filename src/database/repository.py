@@ -1,15 +1,21 @@
 from typing import List
 
-from fastapi import Depends
+from fastapi import Depends, UploadFile, File
 from database.connection import get_db
 from sqlalchemy import select, delete, text
 from sqlalchemy.orm import Session
 from database.orm import Todo, User
+from schema.request import FileUpload
+from dotenv import load_dotenv
+import os, time
+
+load_dotenv(dotenv_path="D:/fastapi_leanning/.venv/pyvenv.cfg")
+
 
 ## dependency injection 예시 , 연쇠적으로 dependency injection 적용완료
-
-
 class TodoRepository:
+    UPLOAD_DIR = os.environ["UPLOAD_DIR"]
+
     def __init__(self, sesssion: Session = Depends(get_db)):
         self.session = sesssion
 
@@ -71,6 +77,27 @@ class TodoRepository:
         ]
 
         return {"todos": todo_list}
+
+    # 단순 파일 업로드
+    def upload_file(
+        self, fileObj: FileUpload, UploadFile: UploadFile | None = File(None)
+    ) -> str:
+        signal = "fail"
+        user_dir = f"{self.UPLOAD_DIR}/{fileObj.w_id}/"
+        if not os.path.exists(user_dir):
+            os.makedirs(user_dir)
+
+        print(fileObj)
+
+        filename_only, ext = os.path.splitext(fileObj.file_name)
+        upload_filename = f"{filename_only}_{(int)(time.time()/1000)}.{ext}"
+        upload_file_loc = user_dir + upload_filename
+        with open(upload_file_loc, "wb") as outfile:
+            while content := UploadFile.file.read(1024):
+                outfile.write(content)
+        print("upload successed", upload_file_loc)
+        signal = "successed"
+        return signal
 
 
 class UserRepository:

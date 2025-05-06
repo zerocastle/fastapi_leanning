@@ -10,7 +10,7 @@ from schema.response import ToDoListSechema, ToDoSchema
 from security import get_access_token
 from service.user import UserService
 
-rounter = APIRouter(prefix="/todos")
+rounter = APIRouter(prefix="/todos", tags=["Todos"])
 
 
 @rounter.get("", status_code=200)
@@ -28,7 +28,6 @@ def get_todos_handler(
 
     if not user:
         raise HTTPException(status_code=404, detail="User not Found")
-    
 
     print("=======")
     print(access_token)

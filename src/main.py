@@ -1,8 +1,12 @@
 from typing import List
 from fastapi import FastAPI
-from api import todo, test , user
+from fastapi.staticfiles import StaticFiles
+from api import todo, test, user
+
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 app.include_router(todo.rounter)
 app.include_router(test.rounter)
 app.include_router(user.router)

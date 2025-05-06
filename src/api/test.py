@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import FastAPI, Body, HTTPException, Depends, APIRouter
+from fastapi import FastAPI, Body, HTTPException, Depends, APIRouter, UploadFile, File
 from sqlalchemy.orm import Session
 from database.connection import get_db
 from database.orm import Todo
@@ -9,7 +9,7 @@ from database.repository import TodoRepository
 from openai import OpenAI
 from dotenv import load_dotenv
 import os
-from schema.request import requestLLM
+from schema.request import requestLLM, FileUpload
 
 
 load_dotenv(dotenv_path="D:/fastApiLec/.venv/pyvenv.cfg")
@@ -55,3 +55,15 @@ def post_todos_handler(
 def post_procTest_handler(todo_repo: TodoRepository = Depends(TodoRepository)):
     result = todo_repo.queryTest2()
     return result
+
+
+# 파일 업로드
+@rounter.post("/fileUPload", status_code=200)
+def file_upload(
+    service: TodoRepository = Depends(TodoRepository),
+    obj: FileUpload = Depends(FileUpload),
+    fileImage: UploadFile | None = File(None),
+):
+    obj.file_name = fileImage.filename
+    signal = service.upload_file(fileObj=obj, UploadFile=fileImage)
+    return {"signal": f"{signal}"}
